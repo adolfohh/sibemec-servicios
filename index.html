@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIBEMEC | Climas, Instalaciones Eléctricas, Paneles Solares y Cargadores EV</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sibemec: {
+                            blue: '#1E40AF',
+                            'blue-light': '#3B82F6',
+                            'blue-glow': '#60A5FA',
+                            'blue-dark': '#0F172A',
+                            orange: '#F59E0B',
+                            'orange-dark': '#D97706',
+                            yellow: '#FBBF24',
+                            dark: '#0B0F17',
+                            card: '#161F30',
+                            border: '#1E293B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'glow-blue': '0 0 25px -5px rgba(37, 99, 235, 0.5)',
+                        'glow-orange': '0 0 25px -5px rgba(245, 158, 11, 0.5)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom CSS Styles -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0B0F17;
+            color: #F1F5F9;
+            overflow-x: hidden;
+        }
+        
+        .font-heading {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .glass-panel {
+            background: rgba(22, 31, 48, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-header {
+            background: rgba(11, 15, 23, 0.88);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .gradient-text-blue {
+            background: linear-gradient(135deg, #60A5FA 0%, #2563EB 50%, #1D4ED8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-text-orange {
+            background: linear-gradient(135deg, #FDE047 0%, #F59E0B 50%, #EA580C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-glow-orange {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-glow-orange:hover {
+            box-shadow: 0 6px 28px rgba(245, 158, 11, 0.7);
+            transform: translateY(-2px);
+        }
+
+        .btn-glow-blue {
+            background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-glow-blue:hover {
+            box-shadow: 0 6px 28px rgba(37, 99, 235, 0.7);
+            transform: translateY(-2px);
+        }
+
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.08); }
+        }
+
+        .animate-glow-pulse {
+            animation: pulseGlow 4s infinite ease-in-out;
+        }
+
+        .card-3d {
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.35s ease;
+        }
+        .card-3d:hover {
+            transform: translateY(-6px) scale(1.015);
+        }
+
+        .service-chip {
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .service-chip.selected {
+            border-color: #F59E0B;
+            background-color: rgba(245, 158, 11, 0.15);
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-amber-500 selection:text-slate-900">
+
+    <!-- Announcement Bar -->
+    <div class="bg-slate-900 text-slate-300 text-xs py-2 px-4 border-b border-slate-800 relative z-50">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="flex items-center space-x-4">
+                <span class="flex items-center text-amber-400 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping mr-2"></span>
+                    Atención Inmediata y Mantenimiento de Emergencia 24/7
+                </span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <a href="tel:+521234567890" class="hover:text-amber-400 transition flex items-center">
+                    <i class="fa-solid fa-phone text-amber-400 mr-1.5"></i> +52 (55) 8901-2345
+                </a>
+                <a href="https://wa.me/521234567890?text=Hola%20SIBEMEC,%20requiero%20información%20de%20sus%20servicios" target="_blank" class="hover:text-emerald-400 transition flex items-center">
+                    <i class="fa-brands fa-whatsapp text-emerald-400 mr-1.5"></i> Cotizar por WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Header Navbar -->
+    <header class="sticky top-0 z-40 glass-header w-full transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo SIBEMEC (Con los colores exactos del logo) -->
+                <a href="#inicio" class="flex items-center space-x-3 group">
+                    <div class="relative w-12 h-12 flex items-center justify-center">
+                        <svg class="w-12 h-12 drop-shadow-[0_0_8px_rgba(245,158,11,0.3)] transition-transform duration-300 group-hover:scale-105" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Upper Yellow/Orange Gear Half -->
+                            <path d="M100 20 L112 35 L128 28 L135 44 L152 44 L152 61 L168 68 L161 84 L175 95 C175 60 145 30 100 20 Z" fill="url(#orangeGrad)"/>
+                            <path d="M100 20 C55 30 25 60 25 95 L39 84 L32 68 L48 61 L48 44 L65 44 L72 28 L88 35 Z" fill="url(#orangeGrad)"/>
+                            
+                            <!-- Middle Blue Curved Shield -->
+                            <path d="M35 105 C35 60 64 32 100 32 C136 32 165 60 165 105 L150 105 C150 72 128 50 100 50 C72 50 50 72 50 105 Z" fill="url(#blueGrad)"/>
+                            
+                            <!-- Inner Dots -->
+                            <circle cx="70" cy="80" r="3" fill="#FFFFFF"/>
+                            <circle cx="85" cy="68" r="3" fill="#FFFFFF"/>
+                            <circle cx="100" cy="64" r="3.5" fill="#FFFFFF"/>
+                            <circle cx="115" cy="68" r="3" fill="#FFFFFF"/>
+                            <circle cx="130" cy="80" r="3" fill="#FFFFFF"/>
+                            
+                            <!-- Center Screw Motif -->
+                            <circle cx="100" cy="105" r="16" fill="#FFFFFF"/>
+                            <circle cx="100" cy="105" r="12" fill="url(#orangeGrad)"/>
+                            <rect x="91" y="103" width="18" height="4" rx="2" fill="#FFFFFF" transform="rotate(-35 100 105)"/>
+
+                            <!-- Lower Dark Gear -->
+                            <path d="M30 115 L170 115 L160 135 L145 130 L135 150 L120 145 L100 165 L80 145 L65 150 L55 130 L40 135 Z" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+                            
+                            <!-- Side Wrenches -->
+                            <path d="M15 125 L45 120 L48 130 L18 135 Z" fill="#F59E0B"/>
+                            <path d="M185 125 L155 120 L152 130 L182 135 Z" fill="#F59E0B"/>
+
+                            <defs>
+                                <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#FBBF24" />
+                                    <stop offset="50%" stop-color="#F59E0B" />
+                                    <stop offset="100%" stop-color="#EA580C" />
+                                </linearGradient>
+                                <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#60A5FA" />
+                                    <stop offset="60%" stop-color="#2563EB" />
+                                    <stop offset="100%" stop-color="#1E40AF" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    
+                    <div class="flex flex-col">
+                        <span class="font-heading text-2xl font-black tracking-wider text-blue-500 leading-none">
+                            SIBE<span class="text-amber-500">MEC</span>
+                        </span>
+                        <span class="text-[9px] uppercase tracking-wider font-semibold text-slate-400 mt-1">
+                            Eléctrica • Climas • Paneles • EV
+                        </span>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden lg:flex items-center space-x-8">
+                    <a href="#inicio" class="text-sm font-medium text-slate-200 hover:text-amber-400 transition-colors">Inicio</a>
+                    <a href="#servicios" class="text-sm font-medium text-slate-200 hover:text-amber-400 transition-colors">Servicios</a>
+                    <a href="#solicitud-rapida" class="text-sm font-medium text-amber-400 hover:text-amber-300 transition-colors flex items-center">
+                        <i class="fa-solid fa-bolt mr-1.5 text-xs"></i> Cotización Rápida
+                    </a>
+                    <a href="#nosotros" class="text-sm font-medium text-slate-200 hover:text-amber-400 transition-colors">Nosotros</a>
+                    <a href="#contacto" class="text-sm font-medium text-slate-200 hover:text-amber-400 transition-colors">Contacto</a>
+                </nav>
+
+                <!-- Action Button -->
+                <div class="hidden lg:flex items-center space-x-4">
+                    <a href="https://wa.me/521234567890?text=Hola%20SIBEMEC,%20me%20interesa%20solicitar%20un%20presupuesto" target="_blank" class="btn-glow-orange text-slate-950 font-bold text-sm px-5 py-2.5 rounded-xl flex items-center shadow-lg">
+                        <i class="fa-brands fa-whatsapp text-base mr-2"></i> WhatsApp Directo
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="lg:hidden flex items-center">
+                    <button id="mobile-menu-btn" type="button" class="text-slate-300 hover:text-white p-2 rounded-lg bg-slate-800 border border-slate-700" aria-label="Abrir menú">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div class="lg:hidden hidden bg-slate-900/95 border-b border-slate-800 px-4 pt-3 pb-6 space-y-3" id="mobile-menu">
+            <a href="#inicio" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800 mobile-link">Inicio</a>
+            <a href="#servicios" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800 mobile-link">Servicios</a>
+            <a href="#solicitud-rapida" class="block px-3 py-2 rounded-md text-base font-medium text-amber-400 hover:bg-slate-800 mobile-link">Cotización Rápida</a>
+            <a href="#nosotros" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800 mobile-link">Nosotros</a>
+            <a href="#contacto" class="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800 mobile-link">Contacto</a>
+            <div class="pt-2">
+                <a href="https://wa.me/521234567890?text=Hola%20SIBEMEC,%20requiero%20una%20cotizacion" target="_blank" class="w-full btn-glow-orange text-slate-950 font-bold text-center block py-3 rounded-xl">
+                    <i class="fa-brands fa-whatsapp text-lg mr-2"></i> Enviar WhatsApp
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="relative min-h-[90vh] flex items-center justify-center overflow-hidden py-16">
+        <!-- Canvas de partículas eléctricas e hilos circuitales -->
+        <canvas id="hero-canvas"></canvas>
+
+        <div class="absolute top-1/4 left-10 w-96 h-96 bg-blue-600/20 rounded-full blur-[130px] pointer-events-none animate-glow-pulse"></div>
+        <div class="absolute bottom-10 right-10 w-96 h-96 bg-amber-500/15 rounded-full blur-[140px] pointer-events-none animate-glow-pulse" style="animation-delay: 2s;"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <div class="lg:col-span-7 text-center lg:text-left space-y-6">
+                    
+                    <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-slate-800/90 border border-amber-500/30 text-amber-300 text-xs font-semibold uppercase tracking-wider shadow-lg">
+                        <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                        <span>Especialistas en Electricidad y Climatización</span>
+                    </div>
+
+                    <h1 class="font-heading text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15]">
+                        <span class="gradient-text-orange">Climas</span>, Instalaciones <span class="gradient-text-blue">Eléctricas</span>, Paneles y Cargadores EV.
+                    </h1>
+
+                    <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed font-light">
+                        Soluciones profesionales para tu hogar, negocio e industria. Mantenimiento, instalación y modernización con garantía por escrito y personal técnico certificado.
+                    </p>
+
+                    <!-- 4 Main Pillar Pills -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-xs font-semibold">
+                        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-slate-200 flex flex-col items-center text-center space-y-1">
+                            <i class="fa-solid fa-snowflake text-cyan-400 text-lg"></i>
+                            <span>Mantenimiento de Climas</span>
+                        </div>
+                        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-slate-200 flex flex-col items-center text-center space-y-1">
+                            <i class="fa-solid fa-bolt text-amber-400 text-lg"></i>
+                            <span>Instalaciones Eléctricas</span>
+                        </div>
+                        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-slate-200 flex flex-col items-center text-center space-y-1">
+                            <i class="fa-solid fa-car-battery text-emerald-400 text-lg"></i>
+                            <span>Cargadores de Autos</span>
+                        </div>
+                        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-slate-200 flex flex-col items-center text-center space-y-1">
+                            <i class="fa-solid fa-solar-panel text-yellow-400 text-lg"></i>
+                            <span>Paneles Solares</span>
+                        </div>
+                    </div>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+                        <a href="#solicitud-rapida" class="w-full sm:w-auto btn-glow-orange text-slate-950 font-extrabold px-8 py-4 rounded-xl text-base flex items-center justify-center shadow-xl">
+                            <i class="fa-solid fa-paper-plane mr-2.5"></i>
+                            Solicitar Cotización Rápida
+                        </a>
+                        <a href="#servicios" class="w-full sm:w-auto glass-panel hover:bg-slate-800 text-white font-semibold px-7 py-4 rounded-xl text-base flex items-center justify-center border border-slate-700 transition">
+                            <i class="fa-solid fa-list-check text-blue-400 mr-2.5"></i>
+                            Ver Todos los Servicios
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- Interactive Visual Card Right -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-full max-w-md">
+                        
+                        <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-amber-500 rounded-3xl blur-xl opacity-30 animate-pulse"></div>
+                        
+                        <div class="relative glass-panel rounded-3xl p-6 sm:p-8 border border-slate-700/80 shadow-2xl space-y-5">
+                            
+                            <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg font-bold">
+                                        <i class="fa-solid fa-shield-halved"></i>
+                                    </div>
+                                    <div>
+                                        <h2 class="font-heading font-bold text-white text-sm">Garantía de Servicio SIBEMEC</h2>
+                                        <p class="text-xs text-slate-400">Trabajo 100% certificado</p>
+                                    </div>
+                                </div>
+                                <span class="bg-emerald-500/20 text-emerald-400 text-xs px-2.5 py-1 rounded-full font-bold border border-emerald-500/30">
+                                    DISPONIBLE
+                                </span>
+                            </div>
+
+                            <!-- Highlights list -->
+                            <div class="space-y-3">
+                                <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex items-center space-x-3">
+                                    <i class="fa-solid fa-snowflake text-cyan-400 text-xl w-6 text-center"></i>
+                                    <div>
+                                        <p class="text-xs font-bold text-white">Mantenimiento e Higienización de Climas</p>
+                                        <p class="text-[11px] text-slate-400">Limpieza profunda, carga de gas y reparación</p>
+                                    </div>
+                                </div>
+
+                                <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex items-center space-x-3">
+                                    <i class="fa-solid fa-charging-station text-emerald-400 text-xl w-6 text-center"></i>
+                                    <div>
+                                        <p class="text-xs font-bold text-white">Cargadores de Auto Eléctrico (EV)</p>
+                                        <p class="text-[11px] text-slate-400">Instalaciones Residenciales y Comerciales</p>
+                                    </div>
+                                </div>
+
+                                <div class="p-3 bg-slate-900/90 rounded-xl border border-slate-800 flex items-center space-x-3">
+                                    <i class="fa-solid fa-solar-panel text-amber-400 text-xl w-6 text-center"></i>
+                                    <div>
+                                        <p class="text-xs font-bold text-white">Paneles Solares Interconectados</p>
+                                        <p class="text-[11px] text-slate-400">Reduce hasta un 95% tu recibo de luz</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <a href="https://wa.me/521234567890?text=Hola%20SIBEMEC,%20quisiera%20agendar%20una%20visita%20técnica" target="_blank" class="w-full btn-glow-orange text-slate-950 font-bold py-3 rounded-xl text-center text-xs block shadow-md">
+                                <i class="fa-brands fa-whatsapp text-sm mr-1.5"></i> Agendar Visita Técnica
+                            </a>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Services Section -->
+    <section id="servicios" class="py-20 relative bg-slate-900/50 border-y border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-14 space-y-3">
+                <span class="text-amber-400 text-xs font-bold uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+                    Nuestra Especialidad
+                </span>
+                <h2 class="font-heading text-3xl sm:text-5xl font-extrabold text-white">
+                    Servicios de <span class="gradient-text-orange">Alta Eficiencia</span>
+                </h2>
+                <p class="text-slate-400 text-sm sm:text-base">
+                    Equipamiento moderno, instalaciones seguras e ingenieros capacitados para resolver cualquier requerimiento.
+                </p>
+            </div>
+
+            <!-- 4 Main Grid Services -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Service 1: Climas -->
+                <div class="card-3d glass-panel rounded-3xl p-8 border border-slate-800 flex flex-col justify-between space-y-6 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                    
+                    <div class="space-y-4">
+                        <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center text-2xl">
+                            <i class="fa-solid fa-snowflake"></i>
+                        </div>
+                        <h3 class="font-heading text-2xl font-bold text-white">Instalación y Mantenimiento de Climas</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Servicio completo para equipos Minisplit, Inverter, Climas Centrales, Paquetes y VRF. Diagnóstico, reparación, recarga de refrigerante e higienización antibacteriana.
+                        </p>
+                        <ul class="text-xs text-slate-300 space-y-2.5 pt-2">
+                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-400 mr-2.5 text-sm"></i> Mantenimiento preventivo e higienización profunda.</li>
+                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-400 mr-2.5 text-sm"></i> Detección y corrección de fugas de gas refrigerante.</li>
+                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-cyan-400 mr-2.5 text-sm"></i> Instalación y reubicación de Minisplits Inverter.</li>
+                        </ul>
+                    </div>
+
+                    <a href="https://wa.me/521234567890?text=Hola%20SIBEMEC,%20necesito%20mantenimiento%20o%20instalación%20de%20climas" target="_blank" class="w-full py-3 rounded-xl border border-cyan-500/30 bg-cyan-950/40 text-xs font-bold text-cyan-300 hover:bg-cyan-500 hover:text-slate-950 transition text-center block">
+                        Cotizar Servicio de Climas <i class="fa-brands fa-whatsapp ml-1"></i>
+                    </a>
+                </div>
+
+                <!-- Service 2: Instalaciones Eléctricas -->
+                <div class="card-3d glass-panel rounded-3xl p-8 border border-slate-800 flex flex-col justify-between space-y-6 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                    <div class="space-y-4">
+                        <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center text-2xl">
+                            <i class="fa-solid fa-bolt-lightning"></i>
+                        </div>
+                        <h3 class="font-heading text-2xl font-bold text-white">Instalaciones Eléctricas Profesionales</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Diseño, cableado y mantenimiento eléctrico en baja y media tensión para hogares, comercios y naves industriales. Cumplimiento estricto con normas de seguridad.
+                        </p>
+                        <ul class="text-xs text-slate-300 space-y-2.5 pt-2">
+                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-amber-400 mr-2.5 text-sm"></i> Ensamble y balanceo de tableros de distribución.</li>
+                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-amber-400 mr-2.5 text-sm"></i> Corrección de cortos, tierras físicas y sobrecargas.</li>
+                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-amber-400 mr-2.5 text-sm"></i> Cableado estructurado y centros de carga.</li>
+                        </ul>
+                    </div>
+
+                    <a href="https://wa.me/521234567890?text=Hola%20SIBEMEC,%20requiero%20una%20instalación%20o%20revisión%20eléctrica" target="_blank" class="w-full py-3 rounded-xl border border-amber-500/30 bg-amber-950/40 text-xs font-bold text-amber-300 hover:bg-amber-500 hover:text-slate-950 transition text-center block">
+                        Cotizar Instalación Eléctrica <i class="fa-brands fa-whatsapp ml-1"></i>
+                    </a>
+                </div>
+
+                <!-- Service 3: Cargadores de Carro Eléctrico -->
+                <div class="card-3d glass-panel rounded-3xl p-8 border border-slate-800 flex flex-col justify-between space-y-6 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                    <div class="space-y-4">
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-2xl">
+                            <i class="fa-solid fa-charging-station"></i>
+                        </div>
+                        <h3 class="font-heading text-2xl font-bold text-white">Instalación de Cargadores para Autos (EV)</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Instalación certificada de electrolineras y wallboxes para autos eléctricos e híbridos enchufables (Tesla, BYD, BMW, Nissan, JAC, Porsche, etc.).
+                        </p>
+                        <ul class="text-xs text-slate-300 space-y-2.5 pt-2">
+                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-emerald-400 mr-2.5 text-sm"></i> Instalación Nivel 2 (220V) para carga ultrarrápida.</li>
+                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-emerald-400 mr-2.5 text-sm"></i> Adecuación de acometida dedicada y protecciones.</li>
+                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-emerald-400 mr-2.5 text-sm"></i> Estaciones para cocheras residenciales y plazas.</li>
+                        </ul>
+                    </div>
+
+                    <a href="https://wa.me/521234567890?text=Hola%20SIBEMEC,%20me%20interesa%20instalar%20un%20cargador%20de%20auto%20eléctrico" target="_blank" class="w-full py-3 rounded-xl border border-emerald-500/30 bg-emerald-950/40 text-xs font-bold text-emerald-300 hover:bg-emerald-500 hover:text-slate-950 transition text-center block">
+                        Cotizar Cargador EV <i class="fa-brands fa-whatsapp ml-1"></i>
+                    </a>
+                </div>
+
+                <!-- Service 4: Paneles Solares -->
+                <div class="card-3d glass-panel rounded-3xl p-8 border border-slate-800 flex flex-col justify-between space-y-6 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+                    <div class="space-y-4">
+                        <div class="w-14 h-14 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 flex items-center justify-center text-2xl">
+                            <i class="fa-solid fa-solar-panel"></i>
+                        </div>
+                        <h3 class="font-heading text-2xl font-bold text-white">Instalación de Paneles Solares</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            Sistemas fotovoltaicos interconectados a la red para ahorro masivo de energía eléctrica. Ingeniería de proyecto, trámites de interconexión e instalación completa.
+                        </p>
+                        <ul class="text-xs text-slate-300 space-y-2.5 pt-2">
+                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-yellow-400 mr-2.5 text-sm"></i> Reducción drástica del recibo de energía eléctrica.</li>
+                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-yellow-400 mr-2.5 text-sm"></i> Microinversores e inversores centrales de alta eficiencia.</li>
+                            <li class="flex items-center"><i class="fa-solid fa-circle-check text-yellow-400 mr-2.5 text-sm"></i> Estructuras de aluminio anodizado de máxima durabilidad.</li>
+                        </ul>
+                    </div>
+
+                    <a href="https://wa.me/521234567890?text=Hola%20SIBEMEC,%20quiero%20cotizar%20un%20sistema%20de%20paneles%20solares" target="_blank" class="w-full py-3 rounded-xl border border-yellow-500/30 bg-yellow-950/40 text-xs font-bold text-yellow-300 hover:bg-yellow-500 hover:text-slate-950 transition text-center block">
+                        Cotizar Paneles Solares <i class="fa-brands fa-whatsapp ml-1"></i>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Simplified Quick Quote Request Section (Replacing heavy complex calculator) -->
+    <section id="solicitud-rapida" class="py-20 relative">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="glass-panel rounded-3xl p-8 sm:p-12 border border-slate-700/80 shadow-2xl relative overflow-hidden">
+                <div class="absolute -top-20 -right-20 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="text-center max-w-2xl mx-auto mb-8 space-y-3">
+                    <span class="text-xs font-bold uppercase tracking-widest text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+                        Sin Complicaciones
+                    </span>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-white">
+                        Solicita tu Cotización en <span class="gradient-text-orange">1 Clic</span>
+                    </h2>
+                    <p class="text-slate-300 text-xs sm:text-sm">
+                        Selecciona el servicio que necesitas y te enviaremos un presupuesto estimado directo por WhatsApp o correo.
+                    </p>
+                </div>
+
+                <!-- Chips Service Selector -->
+                <div class="space-y-6">
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider text-center">
+                        Paso 1: ¿Qué servicio deseas cotizar?
+                    </label>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="chip-container">
+                        <div data-service="Mantenimiento de Climas / Aire Acondicionado" class="service-chip selected p-4 rounded-2xl border border-slate-700 bg-slate-900/90 text-center flex flex-col items-center justify-center space-y-2">
+                            <i class="fa-solid fa-snowflake text-2xl text-cyan-400"></i>
+                            <span class="text-xs font-bold leading-tight">Climas & Minisplits</span>
+                        </div>
+
+                        <div data-service="Instalación Eléctrica" class="service-chip p-4 rounded-2xl border border-slate-700 bg-slate-900/90 text-center flex flex-col items-center justify-center space-y-2">
+                            <i class="fa-solid fa-bolt text-2xl text-amber-400"></i>
+                            <span class="text-xs font-bold leading-tight">Instalación Eléctrica</span>
+                        </div>
+
+                        <div data-service="Instalación de Cargador para Auto Eléctrico (EV)" class="service-chip p-4 rounded-2xl border border-slate-700 bg-slate-900/90 text-center flex flex-col items-center justify-center space-y-2">
+                            <i class="fa-solid fa-charging-station text-2xl text-emerald-400"></i>
+                            <span class="text-xs font-bold leading-tight">Cargador de Auto EV</span>
+                        </div>
+
+                        <div data-service="Sistema de Paneles Solares" class="service-chip p-4 rounded-2xl border border-slate-700 bg-slate-900/90 text-center flex flex-col items-center justify-center space-y-2">
+                            <i class="fa-solid fa-solar-panel text-2xl text-yellow-400"></i>
+                            <span class="text-xs font-bold leading-tight">Paneles Solares</span>
+                        </div>
+                    </div>
+
+                    <!-- Direct Send Button -->
+                    <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-center items-center">
+                        <button type="button" id="btn-quick-wa" class="w-full sm:w-auto btn-glow-orange text-slate-950 font-extrabold px-8 py-4 rounded-xl text-sm flex items-center justify-center shadow-lg">
+                            <i class="fa-brands fa-whatsapp text-lg mr-2"></i>
+                            Enviar Cotización por WhatsApp
+                        </button>
+                        
+                        <a href="#contacto" class="w-full sm:w-auto glass-panel text-slate-300 font-semibold px-6 py-4 rounded-xl text-sm hover:text-white border border-slate-700 text-center">
+                            Formulario de Contacto
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section id="nosotros" class="py-20 relative bg-slate-900/80 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <div class="lg:col-span-6 space-y-6">
+                    <span class="text-blue-400 text-xs font-bold uppercase tracking-wider bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">
+                        Confianza y Profesionalismo
+                    </span>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-white leading-tight">
+                        ¿Por qué elegir los servicios técnicos de <span class="gradient-text-blue">SIBEMEC</span>?
+                    </h2>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                        Cuidamos la seguridad de tu hogar o empresa. Cada instalación eléctrica, mantenimiento de climas o sistema solar es ejecutado bajo estrictas normas internacionales de calidad.
+                    </p>
+
+                    <div class="space-y-4 pt-2">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-user-check text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-bold text-white">Técnicos e Ingenieros Certificados</h3>
+                                <p class="text-xs text-slate-400 mt-1">Personal altamente calificado en climatización, energía solar e instalaciones de potencia.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-file-contract text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-bold text-white">Garantía por Escrito</h3>
+                                <p class="text-xs text-slate-400 mt-1">Todos nuestros trabajos cuentan con respaldo en piezas, mano de obra y tiempos de respuesta.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-piggy-bank text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-bold text-white">Ahorro Energético Garantizado</h3>
+                                <p class="text-xs text-slate-400 mt-1">Optimizamos el consumo de tus climas y sistemas para reducir el gasto de energía.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Metrics Box Right -->
+                <div class="lg:col-span-6">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="glass-panel p-6 rounded-2xl border border-slate-800 text-center space-y-2">
+                            <span class="text-4xl font-black font-heading text-amber-400">+500</span>
+                            <p class="text-xs font-semibold text-slate-200">Climas Instalados y Servidos</p>
+                        </div>
+                        <div class="glass-panel p-6 rounded-2xl border border-slate-800 text-center space-y-2">
+                            <span class="text-4xl font-black font-heading text-blue-400">100%</span>
+                            <p class="text-xs font-semibold text-slate-200">Seguridad Eléctrica</p>
+                        </div>
+                        <div class="glass-panel p-6 rounded-2xl border border-slate-800 text-center space-y-2">
+                            <span class="text-4xl font-black font-heading text-emerald-400">+120</span>
+                            <p class="text-xs font-semibold text-slate-200">Cargadores EV Instalados</p>
+                        </div>
+                        <div class="glass-panel p-6 rounded-2xl border border-slate-800 text-center space-y-2">
+                            <span class="text-4xl font-black font-heading text-yellow-400">-90%</span>
+                            <p class="text-xs font-semibold text-slate-200">Ahorro con Paneles Solares</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section id="contacto" class="py-20 relative bg-slate-900 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                
+                <div class="lg:col-span-5 space-y-6">
+                    <span class="text-amber-400 text-xs font-bold uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+                        Atención Directa
+                    </span>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-white">
+                        Contáctanos Hoy Mismo
+                    </h2>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Estamos listos para agendar tu visita técnica o enviar un presupuesto formal a tu correo o teléfono.
+                    </p>
+
+                    <div class="space-y-4 text-sm">
+                        <div class="glass-panel p-4 rounded-xl border border-slate-800 flex items-center space-x-4">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg shrink-0">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400">Llamada Directa</p>
+                                <a href="tel:+521234567890" class="text-sm font-bold text-white hover:text-amber-400">+52 (55) 8901-2345</a>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel p-4 rounded-xl border border-slate-800 flex items-center space-x-4">
+                            <div class="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center text-lg shrink-0">
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400">Correo Electrónico</p>
+                                <a href="mailto:contacto@sibemec.com" class="text-sm font-bold text-white hover:text-blue-400">contacto@sibemec.com</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7">
+                    <div class="glass-panel p-8 rounded-3xl border border-slate-700/80 shadow-2xl relative">
+                        <h3 class="font-heading text-xl font-bold text-white mb-6 flex items-center">
+                            <i class="fa-solid fa-paper-plane text-amber-400 mr-2.5"></i>
+                            Formulario de Mensaje
+                        </h3>
+
+                        <form id="contact-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="space-y-1">
+                                    <label class="text-xs text-slate-300 font-medium">Nombre *</label>
+                                    <input type="text" required placeholder="Tu Nombre Completo" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-xs text-slate-300 font-medium">Teléfono / WhatsApp *</label>
+                                    <input type="tel" required placeholder="(55) 0000-0000" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500">
+                                </div>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="text-xs text-slate-300 font-medium">Servicio Principal</label>
+                                <select class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500">
+                                    <option value="Mantenimiento de Climas">Mantenimiento de Climas / Minisplits</option>
+                                    <option value="Instalación Eléctrica">Instalación Eléctrica</option>
+                                    <option value="Cargador EV">Instalación de Cargador de Auto Eléctrico (EV)</option>
+                                    <option value="Paneles Solares">Paneles Solares</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="text-xs text-slate-300 font-medium">Mensaje o Detalle de la Solicitud</label>
+                                <textarea rows="3" placeholder="Describe qué requieres (ej. Mantenimiento a 2 minisplits inverter 1.5 ton...)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500 resize-none"></textarea>
+                            </div>
+
+                            <button type="submit" id="submit-btn" class="w-full btn-glow-orange text-slate-950 font-bold py-3.5 rounded-xl text-sm flex items-center justify-center transition">
+                                <i class="fa-solid fa-paper-plane mr-2"></i> Enviar Mensaje
+                            </button>
+                        </form>
+
+                        <!-- Toast Notification -->
+                        <div id="form-toast" class="hidden absolute inset-0 bg-slate-950/95 rounded-3xl p-8 flex flex-col items-center justify-center text-center space-y-4 z-20 border border-emerald-500/50">
+                            <div class="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                            <h4 class="font-heading text-xl font-bold text-white">¡Mensaje Enviado!</h4>
+                            <p class="text-slate-300 text-xs max-w-sm">
+                                Nos pondremos en contacto contigo lo antes posible para atender tu solicitud.
+                            </p>
+                            <button type="button" onclick="closeToast()" class="btn-glow-blue text-white text-xs font-bold px-6 py-2 rounded-xl">
+                                Entendido
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Floating WhatsApp Widget -->
+    <div class="fixed bottom-6 right-6 z-50 flex items-center space-x-2">
+        <div class="glass-panel px-3 py-1.5 rounded-full border border-slate-700 text-[11px] text-slate-200 hidden sm:block">
+            ¿Cotización inmediata? <strong>WhatsApp 24/7</strong>
+        </div>
+        <a href="https://wa.me/521234567890?text=Hola%20SIBEMEC,%20me%20gustaría%20solicitar%20información%20de%20sus%20servicios" target="_blank" class="w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white flex items-center justify-center text-3xl shadow-lg transition-transform hover:scale-110" aria-label="Contacto por WhatsApp">
+            <i class="fa-brands fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 text-slate-400 py-8 border-t border-slate-800/80 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:flex sm:justify-between sm:items-center space-y-4 sm:space-y-0">
+            <span class="font-heading text-lg font-black text-blue-500">SIBE<span class="text-amber-500">MEC</span> - Servicios Eléctricos y Climatización</span>
+            <p>&copy; 2026 SIBEMEC. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile menu toggle
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        if(mobileBtn) {
+            mobileBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+        mobileLinks.forEach(l => l.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+        // Canvas Particle circuit background
+        const canvas = document.getElementById('hero-canvas');
+        if(canvas) {
+            const ctx = canvas.getContext('2d');
+            let width, height, particles = [];
+
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = canvas.parentElement.offsetHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.color = Math.random() > 0.5 ? '#2563EB' : '#F59E0B';
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    if(this.x < 0 || this.x > width) this.vx *= -1;
+                    if(this.y < 0 || this.y > height) this.vy *= -1;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                }
+            }
+
+            for(let i = 0; i < 40; i++) particles.push(new Particle());
+
+            function loop() {
+                ctx.clearRect(0, 0, width, height);
+                for(let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+                    for(let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if(dist < 120) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = 'rgba(245, 158, 11, 0.12)';
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(loop);
+            }
+            loop();
+        }
+
+        // Quick Chips Selector Logic
+        let selectedService = "Mantenimiento de Climas / Aire Acondicionado";
+        const chips = document.querySelectorAll('.service-chip');
+        const btnQuickWa = document.getElementById('btn-quick-wa');
+
+        chips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                chips.forEach(c => c.classList.remove('selected'));
+                chip.classList.add('selected');
+                selectedService = chip.getAttribute('data-service');
+            });
+        });
+
+        if(btnQuickWa) {
+            btnQuickWa.addEventListener('click', () => {
+                const text = `Hola SIBEMEC, me interesa recibir una cotización rápida para: ${selectedService}.`;
+                window.open(`https://wa.me/521234567890?text=${encodeURIComponent(text)}`, '_blank');
+            });
+        }
+
+        // Contact Form
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            document.getElementById('form-toast').classList.remove('hidden');
+        }
+        function closeToast() {
+            document.getElementById('form-toast').classList.add('hidden');
+            document.getElementById('contact-form').reset();
+        }
+    </script>
+</body>
+</html>
